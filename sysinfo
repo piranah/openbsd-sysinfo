@@ -1,0 +1,68 @@
+#!/bin/sh
+
+###SysInfo: A sytem info fetcher like Neofetch but much simplier###
+
+#Note: Current info comands are set for OpenBSD and may need to be changed depending on *nix#
+
+## Info
+
+user=$USER@
+OS="$(uname -sr)"
+#Desktop="${XDG_CURRENT_DESKTOP}"
+WM="$(pgrep -l wm |cut -d " " -f2)"
+Kernel="$(uname -v)"
+Uptime="$(uptime |awk '{print $3, $4}')"
+Packages="$(pkg_info | wc -l)"
+Shell="$(basename "$SHELL")"
+CPU="$(sysctl -n hw.model)" 
+GPU="$(glxinfo -B | grep Device: | sed "s/([^)]*)/()/g" | sed 's/[)(]//g')"
+RAM="$(top | awk '/^Memory:/ {print $3}')"
+IP="$(hostname -s | awk '{print $1}')"
+Temperature="$(sysctl hw.sensors | awk -F'=|degC' '/(ksmn|adt|lm|cpu)0.temp0/ {printf("%2.1f", $2); exit}')"
+
+##Colors
+
+#maybe don't change
+
+if [ -x "$(command -v tput)" ]; then
+        bold="$(tput bold 2> /dev/null)"
+        black="$(tput setaf 0 2> /dev/null 0 0 2>/dev/null)"
+        red="$(tput setaf 1 2> /dev/null 0 0 2>/dev/null)"
+        green="$(tput setaf 2 2> /dev/null 0 0 2>/dev/null)"
+        yellow="$(tput setaf 3 2> /dev/null 0 0 2>/dev/null)"
+        blue="$(tput setaf 4 2> /dev/null 0 0 2>/dev/null)"
+        magenta="$(tput setaf 5 2> /dev/null 0 0 2>/dev/null)"
+        cyan="$(tput setaf 6 2> /dev/null 0 0 2>/dev/null)"
+        white="$(tput setaf 7 2> /dev/null 0 0 2>/dev/null)"
+        reset="$(tput sgr0 2> /dev/null)"
+fi
+
+
+
+#can change color names
+
+lc="${reset}${bold}${yellow}"       # labels
+nc="${reset}${bold}${yellow}"       # user and hostname
+ic="${reset}"                       # info / end color
+#c0="${reset}${yellow}"              # first color
+#c1="${reset}${white}"               # second color
+#c2="${reset}${bold}${yellow}"       # third color
+
+#Note: Commented colors are not used by default but can be enabled and used#
+
+
+##Output
+
+
+echo '          _____       '            ${nc} $user$(hostname -s) ${reset}
+echo '        \-     -/     '            ${lc} OS:${ic} $OS
+echo '     \_/         \    '            ${lc} WM:${ic} $WM			 
+echo '     |        O O |   '            ${lc} Kernel:${ic} $Kernel
+echo '     |_  <   )  3 )   '            ${lc} Uptime:${ic} $Uptime 
+echo '     / \         /    '            ${lc} Packages:${ic} $Packages 
+echo '        /-_____-\     '            ${lc} Shell:${ic} $Shell
+echo '                      '            ${lc} CPU:${ic} $CPU
+echo '                      '            ${lc} GPU:${ic} $GPU
+echo '                      '            ${lc} RAM:${ic} $RAM
+#echo '                      '           ${lc} Temperature:${ic} $Temperature
+#echo '                      '           ${lc} IP:${ic} $IP
