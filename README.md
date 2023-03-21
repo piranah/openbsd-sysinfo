@@ -1,4 +1,4 @@
-# sysinfo
+# Sysinfo
 
 OpenBSD specific lightweight screenfetch script
 
